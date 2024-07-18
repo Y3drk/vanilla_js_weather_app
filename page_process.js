@@ -12,17 +12,18 @@ const output = document.getElementById("output_control_text");
 output.textContent = baseOutput;
 
 const WEATHER_API_KEY = "3127cee09dcf94afcea237915dc5cb77";
+
 // For best practice should be hidden, but requires additional tools/libs
 
-function getGeocodingAPILink(location){
+function getGeocodingAPILink(location) {
     return `http://api.openweathermap.org/geo/1.0/direct?q=${location}&limit=1&appid=${WEATHER_API_KEY}`;
 }
 
-function getCurrentWeatherAPILink(latitude, longitude){
+function getCurrentWeatherAPILink(latitude, longitude) {
     return `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}&units=metric`
 }
 
-function returnErrorMessage(error){
+function returnErrorMessage(error) {
     return `The API call failed due to ${error}`;
 }
 
@@ -57,22 +58,30 @@ async function callAPI(e) {
         }
 
         const weatherJson = await weatherResponse.json();
-        const temperature = Math.round(weatherJson.main.temp); //deg C
-        const clouds = weatherJson.clouds.all; // %
-        const wind = weatherJson.wind.speed; // m/s
-        const weather = weatherJson.weather[0].main; //string
-        const weatherDescription = weatherJson.weather[0].description; //string
-        const pressure = weatherJson.main.pressure; // hPa
 
-        console.log(weather, weatherDescription, wind, clouds, temperature, pressure);
+        const temperature = Math.round(weatherJson.main.temp);
+        const clouds = weatherJson.clouds.all;
+        const wind = weatherJson.wind.speed;
+        const weather = weatherJson.weather[0].main;
+        const weatherDescription = weatherJson.weather[0].description;
+        const pressure = weatherJson.main.pressure;
+
+        const weatherStatistics = [["temperature", temperature, "°C"], ["cloudiness", clouds, "%"], ["wind speed", wind, "m/s"],
+            ["weather type", weather, ""], ["weather description", weatherDescription, "."], ["pressure", pressure, "hPa"]];
 
 
         //3. Display results or error
         output.textContent = `${successfulCall} ${location}.`
 
-        // const weatherInfo = document.createElement('ul');
-        //
-        // document.getElementById('output_div').appendChild(weatherInfo);
+        const weatherInfo = document.createElement('ul');
+        weatherInfo.setAttribute("id", "weather_info");
+        document.getElementById('output_div').appendChild(weatherInfo);
+
+        for (const infoTuple of weatherStatistics){
+            const stat = document.createElement('li');
+            stat.innerHTML = `<strong>${infoTuple[0]}</strong>: ${infoTuple[1]}${infoTuple[2]}`;
+            weatherInfo.appendChild(stat);
+        }
 
     } catch (error) {
         returnErrorMessage(error.message);
@@ -89,5 +98,5 @@ function resetResults(e) {
     output.textContent = baseOutput;
 
     //2. clear city weather output
-
+    document.getElementById('weather_info').remove();
 }
