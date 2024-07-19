@@ -99,11 +99,11 @@ async function callAPI(e) {
         const country = weatherJson.sys.country;
 
         const weatherStatistics = [["temperature", temperature, "°C"], ["cloudiness", clouds, "%"], ["wind speed", wind, "m/s"],
-            ["weather type", weather, ""], ["weather description", weatherDescription, "."], ["pressure", pressure, "hPa"]];
+            ["weather type", weather, ""], ["weather description", weatherDescription, ""], ["pressure", pressure, "hPa"]];
 
 
         //3. Display results or error
-        outputStateText.textContent = `${successfulCall} ${location}, ${country}.`
+        outputStateText.innerHTML = `${successfulCall} <strong>${location}, ${country}</strong>.`
 
         const weatherInfo = document.createElement('ul');
         weatherInfo.setAttribute("id", "weather_info");
@@ -111,7 +111,7 @@ async function callAPI(e) {
 
         for (const infoTuple of weatherStatistics){
             const stat = document.createElement('li');
-            stat.innerHTML = `<strong>${infoTuple[0]}</strong>: ${infoTuple[1]}${infoTuple[2]}`;
+            stat.innerHTML = `<strong>${infoTuple[0]}</strong>: ${infoTuple[1]} ${infoTuple[2]}`;
             weatherInfo.appendChild(stat);
         }
 
