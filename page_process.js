@@ -8,32 +8,51 @@ const baseOutput = "Type the name of the city in the input field, then click SEA
 const waitingOutput = "Your call is being processed, please wait";
 const successfulCall = "Your call was successful! Here are the results for ";
 
-const output = document.getElementById("output_control_text");
-output.textContent = baseOutput;
+const outputStateText = document.getElementById("output_control_text");
+outputStateText.textContent = baseOutput;
 
 const WEATHER_API_KEY = "3127cee09dcf94afcea237915dc5cb77";
+// For best practice should be hidden (both in the API call and in the code repository), but requires additional tools/libs, techniques
 
-// For best practice should be hidden, but requires additional tools/libs
-
+/**
+ * Generates the full http request for Geocoding feature provided by OpenWeather - https://openweathermap.org/api/geocoding-api
+ * @param location - the place (city, town, village) where we want to check the weather. Majority of the world's most popular languages is included, Polish and English withstanding.
+ * @returns {string} - the complete HTTP request, that allows us to obtain the geographical coordinates of the aforementioned place for another API call
+ */
 function getGeocodingAPILink(location) {
     return `http://api.openweathermap.org/geo/1.0/direct?q=${location}&limit=1&appid=${WEATHER_API_KEY}`;
 }
 
+/**
+ * Generates the full http request for Current weather data feature provided by OpenWeather - https://openweathermap.org/current
+ * @param latitude - geographical coordinate of the place where we want to check the weather, indicating placement of the location in the south-north axis
+ * @param longitude - geographical coordinate of the place where we want to check the weather, indicating placement of the location in the east-west axis
+ * @returns {string} - the complete HTTP request that will get us the data about the current weather in the given location.
+ */
 function getCurrentWeatherAPILink(latitude, longitude) {
     return `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}&units=metric`
 }
 
-function returnErrorMessage(error) {
-    return `The API call failed due to ${error}`;
+/**
+ * The function wraps the error data in an additional phrase, to make the output more user-friendly
+ * @param errorData - error's code, status or message derived from the fetch's response
+ * @returns {string} - user-friendly error message.
+ */
+function returnErrorMessage(errorData) {
+    return `The API call failed due to ${errorData}`;
 }
 
+/**
+ * Function that transforms the input field data into the information about the weather in the given location, by performing necessary API calls and parsing the returned data
+ * @param e - event fired when a SEARCH button is pressed
+ */
 async function callAPI(e) {
     e.preventDefault()
 
     const input_field = document.getElementById('place_input');
 
     //1. Set-up waiting for results in display
-    output.textContent = waitingOutput;
+    outputStateText.textContent = waitingOutput;
 
     //2. Call weather API
     const location = input_field.value;
@@ -71,7 +90,7 @@ async function callAPI(e) {
 
 
         //3. Display results or error
-        output.textContent = `${successfulCall} ${location}.`
+        outputStateText.textContent = `${successfulCall} ${location}.`
 
         const weatherInfo = document.createElement('ul');
         weatherInfo.setAttribute("id", "weather_info");
@@ -91,11 +110,15 @@ async function callAPI(e) {
     input_field.value = "";
 }
 
+/**
+ * The function clears the weather output (both the state text and the weather parameters) previously produced by the API calls, going back to the default display
+ * @param e - event fired when a RESET button is pressed
+ */
 function resetResults(e) {
     e.preventDefault()
 
-    //1. return to default control text
-    output.textContent = baseOutput;
+    //1. return to default state text
+    outputStateText.textContent = baseOutput;
 
     //2. clear city weather output
     document.getElementById('weather_info').remove();
