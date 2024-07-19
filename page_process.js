@@ -3,6 +3,7 @@ searchButton.addEventListener("click", callAPI, false);
 
 const resetButton = document.getElementById("reset_button");
 resetButton.addEventListener("click", resetResults, false);
+resetButton.disabled = true;
 
 const baseOutput = "Type the name of the city in the input field, then click SEARCH to get its weather";
 const waitingOutput = "Your call is being processed, please wait";
@@ -56,23 +57,34 @@ async function callAPI(e) {
 
     //2. Call weather API
     const location = input_field.value;
+    const reg = /[0-9!@#$%^&*()_+=\[\]{};':"\\|,.<>\/?]/g;
+
+    if (reg.test(location)) {
+        outputStateText.textContent = returnErrorMessage(`incompatible input. Please provide a location name without any numbers and special signs. It can only consist of letters, a space and a dash.`);
+        return;
+    }
 
     //a. Convert location name to latitude and longitude
     try {
         const response = await fetch(getGeocodingAPILink(location));
         if (!response.ok) {
-            returnErrorMessage(`(GeoCoding) - response status: ${response.status}`);
+            outputStateText.textContent = returnErrorMessage(`(GeoCoding) - response status: ${response.status}`);
             return;
         }
 
         const geocodingJson = await response.json();
+
+        if (geocodingJson.length === 0){
+            outputStateText.textContent = returnErrorMessage(`(GeoCoding) - the location you provided is not recognized by the API`);
+            return;
+        }
         const latitude = geocodingJson[0].lat;
         const longitude = geocodingJson[0].lon;
 
         //b. call the API for current weather
         const weatherResponse = await fetch(getCurrentWeatherAPILink(latitude, longitude));
         if (!response.ok) {
-            returnErrorMessage(`(Current Weather) - response status: ${response.status}`);
+            outputStateText.textContent = returnErrorMessage(`(Current Weather) - response status: ${response.status}`);
             return;
         }
 
@@ -84,13 +96,14 @@ async function callAPI(e) {
         const weather = weatherJson.weather[0].main;
         const weatherDescription = weatherJson.weather[0].description;
         const pressure = weatherJson.main.pressure;
+        const country = weatherJson.sys.country;
 
         const weatherStatistics = [["temperature", temperature, "°C"], ["cloudiness", clouds, "%"], ["wind speed", wind, "m/s"],
             ["weather type", weather, ""], ["weather description", weatherDescription, "."], ["pressure", pressure, "hPa"]];
 
 
         //3. Display results or error
-        outputStateText.textContent = `${successfulCall} ${location}.`
+        outputStateText.textContent = `${successfulCall} ${location}, ${country}.`
 
         const weatherInfo = document.createElement('ul');
         weatherInfo.setAttribute("id", "weather_info");
@@ -103,11 +116,18 @@ async function callAPI(e) {
         }
 
     } catch (error) {
-        returnErrorMessage(error.message);
+        outputStateText.textContent = returnErrorMessage(error.message);
     }
 
     //4. Clear input field
     input_field.value = "";
+
+    //5. Block the SEARCH button until the RESET button is pressed
+    searchButton.disabled = true;
+
+    //6. Enable RESET button
+    resetButton.disabled = false;
+
 }
 
 /**
@@ -122,4 +142,10 @@ function resetResults(e) {
 
     //2. clear city weather output
     document.getElementById('weather_info').remove();
+
+    //3. Unlock the SEARCH button
+    searchButton.disabled = false;
+
+    //4. disable RESET button
+    resetButton.disabled = true;
 }
