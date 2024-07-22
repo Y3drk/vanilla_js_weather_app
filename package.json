@@ -1,0 +1,17 @@
+{
+  "name": "vanilla-js-weather-app",
+  "version": "1.0.0",
+  "description": "Vanilla js weather app, that leverages weather API. A baseline for the demo of code assistants like copilot or cursor",
+  "main": "./src/page.html",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^10.3.2",
+    "@testing-library/jest-dom": "^6.4.6",
+    "jest": "^29.7.0"
+  },
+  "dependencies": {
+    "jsdom": "^24.1.1"
+  }
+}

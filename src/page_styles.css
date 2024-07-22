@@ -5,7 +5,7 @@ body,html {
     /*TODO: Add some nicer background*/
     font-family: "Roboto", sans-serif;
 
-    background-image: url("assets/skyline_bg_image.jpg");
+    background-image: url("../assets/skyline_bg_image.jpg");
     /*src: https://www.vecteezy.com/vector-art/7636142-city-skyline-silhouette-design-vector*/
     background-repeat: no-repeat;
     background-size: contain;
