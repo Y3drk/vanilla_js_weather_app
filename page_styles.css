@@ -2,8 +2,15 @@ body,html {
     margin: 0;
     padding: 0;
 
-    /*TODO: Add some nicer font & background*/
+    /*TODO: Add some nicer background*/
     font-family: "Roboto", sans-serif;
+
+    background-image: url("assets/skyline_bg_image.jpg");
+    /*src: https://www.vecteezy.com/vector-art/7636142-city-skyline-silhouette-design-vector*/
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center bottom;
+
 }
 
 #container {
@@ -25,18 +32,27 @@ body,html {
 
 #buttons_div {
     box-sizing: border-box;
-    padding: 2%;
+    width: fit-content;
+    height: fit-content;
+
+    padding-top: 1.25vw;
 
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     gap: 10%;
+
+    justify-content: center;
+    align-items: center;
 }
 
 #search_button, #reset_button {
-    padding: 8%;
+    max-width: 128px;
+    max-height: 32px;
+    min-width: 100px;
+    min-height: 28px;
 
-    border-radius: 0%;
+    border-radius: 0;
     border: none;
 
     color: white;
@@ -95,6 +111,6 @@ ul {
 
 li {
     padding: 1%;
-    min-width: 50%;
+    min-width: 60%;
     max-width: 100%;
 }
